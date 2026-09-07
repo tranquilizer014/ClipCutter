@@ -1,0 +1,94 @@
+name: Build ClipCutter APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+
+    steps:
+      - name: Checkout app repo
+        uses: actions/checkout@v4
+
+      - name: Free up disk space (native FFmpeg build needs it)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android/sdk/ndk-bundle
+          sudo rm -rf /opt/ghc /opt/hostedtoolcache/CodeQL
+          docker system prune -af || true
+          df -h
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install native build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf automake libtool pkg-config curl git \
+            build-essential yasm nasm gperf texinfo bison ragel \
+            python3 python3-pip unzip zip wget meson ninja-build \
+            doxygen cmake autogen autopoint groff gtk-doc-tools libtasn1-bin
+
+      - name: Install Android NDK r26c
+        run: |
+          echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager \
+            --sdk_root=${ANDROID_SDK_ROOT} "ndk;26.2.11394342" "platforms;android-35" || \
+          sdkmanager --sdk_root=${ANDROID_SDK_ROOT} "ndk;26.2.11394342" "platforms;android-35"
+          echo "ANDROID_NDK_ROOT=${ANDROID_SDK_ROOT}/ndk/26.2.11394342" >> $GITHUB_ENV
+
+      - name: Clone FFmpegKit (maintained fork) source
+        run: |
+          git clone --recurse-submodules https://github.com/ffmpegkit-maintained/ffmpeg-kit.git ffmpeg-kit-src
+
+      - name: Build FFmpegKit AAR (arm64-v8a, MediaCodec H.264 enabled)
+        working-directory: ffmpeg-kit-src
+        run: |
+          chmod +x android.sh
+          ./android.sh \
+            --enable-android-media-codec \
+            --enable-android-zlib \
+            --disable-arm-v7a \
+            --disable-arm-v7a-neon \
+            --disable-x86 \
+            --disable-x86-64
+
+      - name: Locate the built AAR
+        run: |
+          mkdir -p app/libs
+          echo "Searching for produced .aar files..."
+          find ffmpeg-kit-src -iname "*.aar" -print
+          FOUND_AAR=$(find ffmpeg-kit-src -iname "*.aar" | head -n 1)
+          if [ -z "$FOUND_AAR" ]; then
+            echo "::error::No .aar file was produced by android.sh — check the build log above."
+            exit 1
+          fi
+          echo "Using AAR: $FOUND_AAR"
+          cp "$FOUND_AAR" app/libs/ffmpeg-kit-release.aar
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
+
+      - name: Build unsigned debug APK
+        run: gradle assembleDebug --no-daemon --stacktrace
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClipCutter-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-kit-build-logs
+          path: |
+            ffmpeg-kit-src/**/*.log
+          if-no-files-found: ignore

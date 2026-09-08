@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="How to use ClipCutter"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:lineSpacingExtra="4dp"
+            android:text="1. Tap \'Pick Video\' and choose a file, either from Files or your Gallery.\n\n2. Use the player to scrub through the video. Adjust playback speed with the speed button, or nudge position with the -10s / -5s / +5s / +10s buttons.\n\n3. Mark a clip either by tapping \'Mark Start\' / \'Mark End\' while scrubbing, or by typing the start and end times directly (mm:ss) into the two text fields.\n\n4. Tap \'Add Clip to List\' to save that range. Repeat for as many clips as you want from the same video.\n\n5. Tap any clip in the list to preview it (the player jumps to its start and pauses automatically at its end). Tap \'Edit\' to load a clip back into the marking fields to adjust it, or \'Remove\' to delete it.\n\n6. When ready, tap \'Export All Clips\', enter a name (e.g. your podcast name), and confirm. Each clip exports as a separate 720p H.264 .mp4 file named \'{name} clip 1.mp4\', \'{name} clip 2.mp4\', etc. You can cancel mid-export if needed.\n\n7. Exported files are saved to Android/data/com.xyz.clipcutter/files/Movies/ on your device, and a Share option appears after export to hand a clip straight to Instagram or YouTube.\n\nYour clip list is saved automatically, so if the app closes or you switch away, your marks will still be there when you come back (as long as you picked the video from Files; some Gallery-picked videos may need to be re-picked after a full restart)." />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Links"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btnLinkRepo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="GitHub Repo" />
+
+        <Button
+            android:id="@+id/btnLinkGithubProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="GitHub Profile" />
+
+        <Button
+            android:id="@+id/btnLinkTelegram"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Telegram Channel" />
+
+        <Button
+            android:id="@+id/btnLinkReddit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Reddit Profile" />
+
+        <Button
+            android:id="@+id/btnLinkSubreddit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Subreddit" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Crash Logs"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="If the app ever crashes, a log is saved locally on your phone automatically. Use this to share it." />
+
+        <Button
+            android:id="@+id/btnShareCrashLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Share Latest Crash Log" />
+
+        <Button
+            android:id="@+id/btnClearCrashLogs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Clear Crash Logs" />
+
+    </LinearLayout>
+</ScrollView>
